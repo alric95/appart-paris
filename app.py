@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[223]:
+# In[4]:
 
 
 import dash
@@ -13,7 +13,7 @@ import time
 import datetime
 
 
-# In[224]:
+# In[5]:
 
 
 #generate table
@@ -29,20 +29,20 @@ def generate_table(dataframe, max_rows=25):
     )
 
 
-# In[225]:
+# In[6]:
 
 
 #read csv
 data=pd.read_csv('data_explorimmo_27janvier.csv', ',')
 
 
-# In[226]:
+# In[7]:
 
 
 data['€']=(data['Loyer estimé'])-(data['prix_annonce']-30000)/(12*15)
 
 
-# In[227]:
+# In[8]:
 
 
 col=['Unnamed: 0','m2']
@@ -53,25 +53,23 @@ cols = ['Arrondissement', 'm2', '#Pièces', '#Chambres', 'Étage', 'Prix', 'Prix
 data = data[cols]
 
 
-# In[228]:
+# In[9]:
 
 
 data.sort_values('€', ascending=False, inplace=True)
 
 
-# In[229]:
+# In[10]:
 
 
 data
 
 
-# In[246]:
+# In[11]:
 
 
 #dash layout
 app = dash.Dash(__name__)
-server = app.server
-
 app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/bWLwgP.css"})
 available_indicators = list(data)[:-3]
 available_geo = data['Arrondissement'].unique()
@@ -82,7 +80,7 @@ app.layout = html.Div([
     #FIRST GRAPH
     html.Div([
         
-        html.H2(children='Données de http://www.explorimmo.com ('+str(data.shape[0])+' annonces)',style={'text-align':'center','font-family':'monospace', 'margin-top':'5%'}),
+        html.H2(id='titre'),
         
         html.Div([
                 html.Label('Choix arrondissement(s):'),
@@ -164,9 +162,27 @@ app.layout = html.Div([
 ])
 
 
-# In[247]:
+# In[12]:
 
 
+#CALLBACK TITRE
+@app.callback(
+    dash.dependencies.Output('titre', 'children'),
+    [dash.dependencies.Input('local-choice', 'value')])
+def update_title(local_choice):
+    dfff = None
+    dfff = data.copy()
+    dfff = dfff.iloc[0:0]
+    for i in range(len(local_choice)):
+        dfff = dfff.append(data[data['Arrondissement'] == int(local_choice[i])])
+    dfff = dfff[dfff['m2'] > 5]
+    
+    return html.H2(id='titre' ,children='Données de http://www.explorimmo.com ('+str(dfff.shape[0]) +' annonces)', style={'text-align':'center','font-family':'monospace', 'margin-top':'5%'})
+
+
+
+
+#CALLBACK SCATTER
 @app.callback(
     dash.dependencies.Output('indicator-graphic', 'figure'),
     [dash.dependencies.Input('xaxis-column', 'value'),
@@ -179,7 +195,7 @@ def update_graph(xaxis_column_name, yaxis_column_name, local_choice):
     dfff = dfff.iloc[0:0]
     for i in range(len(local_choice)):
         dfff = dfff.append(data[data['Arrondissement'] == int(local_choice[i])])
-    dfff = dfff[dfff['m2'] > 9]
+    dfff = dfff[dfff['m2'] > 5]
     
     return {
         'data': [go.Scatter(
