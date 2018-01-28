@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[4]:
+# In[223]:
 
 
 import dash
@@ -13,7 +13,7 @@ import time
 import datetime
 
 
-# In[5]:
+# In[224]:
 
 
 #generate table
@@ -29,20 +29,20 @@ def generate_table(dataframe, max_rows=25):
     )
 
 
-# In[6]:
+# In[225]:
 
 
 #read csv
 data=pd.read_csv('data_explorimmo_27janvier.csv', ',')
 
 
-# In[7]:
+# In[226]:
 
 
 data['€']=(data['Loyer estimé'])-(data['prix_annonce']-30000)/(12*15)
 
 
-# In[8]:
+# In[227]:
 
 
 col=['Unnamed: 0','m2']
@@ -53,23 +53,25 @@ cols = ['Arrondissement', 'm2', '#Pièces', '#Chambres', 'Étage', 'Prix', 'Prix
 data = data[cols]
 
 
-# In[9]:
+# In[228]:
 
 
 data.sort_values('€', ascending=False, inplace=True)
 
 
-# In[10]:
+# In[229]:
 
 
 data
 
 
-# In[11]:
+# In[246]:
 
 
 #dash layout
 app = dash.Dash(__name__)
+server = app.server
+
 app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/bWLwgP.css"})
 available_indicators = list(data)[:-3]
 available_geo = data['Arrondissement'].unique()
@@ -162,7 +164,7 @@ app.layout = html.Div([
 ])
 
 
-# In[12]:
+# In[247]:
 
 
 #CALLBACK TITRE
@@ -177,10 +179,7 @@ def update_title(local_choice):
         dfff = dfff.append(data[data['Arrondissement'] == int(local_choice[i])])
     dfff = dfff[dfff['m2'] > 5]
     
-    return html.H2(id='titre' ,children='Données de http://www.explorimmo.com ('+str(dfff.shape[0]) +' annonces)', style={'text-align':'center','font-family':'monospace', 'margin-top':'5%'})
-
-
-
+    return html.H2(children='Données de http://www.explorimmo.com ('+str(dfff.shape[0]) +' annonces)', style={'text-align':'center','font-family':'monospace', 'margin-top':'5%'})
 
 #CALLBACK SCATTER
 @app.callback(
@@ -195,7 +194,7 @@ def update_graph(xaxis_column_name, yaxis_column_name, local_choice):
     dfff = dfff.iloc[0:0]
     for i in range(len(local_choice)):
         dfff = dfff.append(data[data['Arrondissement'] == int(local_choice[i])])
-    dfff = dfff[dfff['m2'] > 5]
+    dfff = dfff[dfff['m2'] > 9]
     
     return {
         'data': [go.Scatter(
