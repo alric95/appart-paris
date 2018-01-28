@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[223]:
+# In[1]:
 
 
 import dash
@@ -13,7 +13,7 @@ import time
 import datetime
 
 
-# In[224]:
+# In[2]:
 
 
 #generate table
@@ -29,20 +29,20 @@ def generate_table(dataframe, max_rows=25):
     )
 
 
-# In[225]:
+# In[18]:
 
 
 #read csv
 data=pd.read_csv('data_explorimmo_27janvier.csv', ',')
 
 
-# In[226]:
+# In[19]:
 
 
 data['€']=(data['Loyer estimé'])-(data['prix_annonce']-30000)/(12*15)
 
 
-# In[227]:
+# In[20]:
 
 
 col=['Unnamed: 0','m2']
@@ -53,16 +53,16 @@ cols = ['Arrondissement', 'm2', '#Pièces', '#Chambres', 'Étage', 'Prix', 'Prix
 data = data[cols]
 
 
-# In[228]:
+# In[21]:
 
 
 data.sort_values('€', ascending=False, inplace=True)
 
 
-# In[229]:
+# In[25]:
 
 
-data
+data=data[1:]
 
 
 # In[246]:
