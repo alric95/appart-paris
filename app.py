@@ -79,7 +79,6 @@ available_geo = data['Arrondissement'].unique()
 
 app.layout = html.Div([
     
-    html.H1(children='Apparts Paris',style={'text-align':'center','font-family':'monospace'}),
     #FIRST GRAPH
     html.Div([
         
